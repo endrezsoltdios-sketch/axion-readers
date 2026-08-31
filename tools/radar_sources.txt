@@ -1,0 +1,9 @@
+# Axion research radar sources — one per line: NAME | rss <url>  OR  NAME | arxiv <cat>
+# Add a university/lab = add a line. Comments start with #.
+MIT News AI | rss https://news.mit.edu/rss/topic/artificial-intelligence2
+Berkeley BAIR | rss https://bair.berkeley.edu/blog/feed.xml
+CMU ML Blog | rss https://blog.ml.cmu.edu/feed/
+Stanford HAI | rss https://hai.stanford.edu/rss.xml
+arXiv AI | arxiv cs.AI
+arXiv Software Eng | arxiv cs.SE
+arXiv Computation+Language | arxiv cs.CL
