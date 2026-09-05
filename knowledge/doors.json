@@ -1,0 +1,67 @@
+{
+  "schema": "axion.doors/1",
+  "about": "Every outside site you touch, and the rail you OWN to each: read / search / post. kind = api (your own OAuth or key) | feed (public JSON/RSS/rehydration payload) | page (fetch + parse) | browser (a real Chrome with your own profile, via browserd.py) | human (a person does it) | none. post rails are ALWAYS human-fired: door.py refuses to run one without --human-fired \"<the user's words>\", which it logs. Nothing here evades a site's defences: a shut door is reported with the human step that opens it. Edit this file; leave door.py alone.",
+  "updated": "2026-09-06",
+  "doors": {
+    "youtube": {
+      "label": "YouTube (your channel)",
+      "rails": {
+        "read": {"kind": "api", "cmd": "py tools/yt_comments.py comments {args}", "note": "YouTube Data API on your own OAuth refresh token (youtube_token.json, scope youtube.force-ssl)"},
+        "search": {"kind": "api", "cmd": "py tools/yt_comments.py search {args}"},
+        "post": {"kind": "api", "cmd": "py tools/yt_reply.py {args} --post --as \"<your channel name>\"", "note": "replies from a fire sheet; dry run without --post; link-carrying replies may be filtered silently -- read them back"}
+      },
+      "probe": {"type": "cmd", "argv": ["py", "tools/yt_comments.py"], "ok_codes": [2], "timeout": 60, "means": "exit 2 = OAuth refresh worked, no verb given"},
+      "human_step": null
+    },
+    "reddit": {
+      "label": "Reddit",
+      "rails": {
+        "read": {"kind": "api", "cmd": "py tools/reddit_api.py thread {args}", "note": "official OAuth on a script app you create at reddit.com/prefs/apps"},
+        "search": {"kind": "api", "cmd": "py tools/reddit_api.py search {args}"},
+        "post": {"kind": "api", "cmd": "py tools/reddit_api.py {args}", "note": "comment/post; refused without --human-fired; check `banned <sub>` and the sub's rules first"}
+      },
+      "probe": {"type": "cmd", "argv": ["py", "tools/reddit_api.py", "whoami"], "ok_codes": [0], "timeout": 60, "means": "token minted and /api/v1/me answered"},
+      "human_step": "create the script app once and add REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET / REDDIT_USERNAME / REDDIT_PASSWORD to your environment"
+    },
+    "tiktok": {
+      "label": "TikTok (public read)",
+      "rails": {
+        "read": {"kind": "feed", "cmd": "py tools/tiktok_read.py {args}", "note": "public rehydration payload; settle wait on the browser rung"},
+        "search": {"kind": "page", "cmd": "py tools/search.py {args} --site tiktok.com", "note": "SERP presence only"},
+        "post": {"kind": "human", "cmd": null, "note": "TikTok Studio in a browser, by a person"}
+      },
+      "probe": {"type": "cmd", "argv": ["py", "tools/tiktok_read.py", "@tiktok", "--json"], "ok_codes": [0], "timeout": 120},
+      "human_step": "open TikTok Studio logged in"
+    },
+    "cloudflare": {
+      "label": "Cloudflare",
+      "rails": {
+        "read": {"kind": "api", "cmd": "py tools/cf.py {args}", "note": "REST + GraphQL on CLOUDFLARE_API_TOKEN; KV via wrangler"},
+        "search": {"kind": "none", "cmd": null},
+        "post": {"kind": "api", "cmd": "npx wrangler deploy", "note": "run from the Worker's directory"}
+      },
+      "probe": {"type": "cmd", "argv": ["py", "tools/cf.py", "verify"], "ok_codes": [0], "timeout": 60},
+      "human_step": null
+    },
+    "github": {
+      "label": "GitHub",
+      "rails": {
+        "read": {"kind": "api", "cmd": null, "note": "GITHUB_TOKEN fine-grained"},
+        "search": {"kind": "api", "cmd": null},
+        "post": {"kind": "api", "cmd": "git push", "note": "publishing = the user's release words, logged"}
+      },
+      "probe": {"type": "http", "url": "https://api.github.com/rate_limit", "auth_env": "GITHUB_TOKEN", "expect": 200, "timeout": 30},
+      "human_step": null
+    },
+    "any_page": {
+      "label": "Any public web page",
+      "rails": {
+        "read": {"kind": "page", "cmd": "py tools/web.py {args} --ladder", "note": "stdlib fetch; falls to browserd only when JS-gated; a CAPTCHA wall exits 3 and stays a wall"},
+        "search": {"kind": "api", "cmd": "py tools/search.py {args}", "note": "DataForSEO, about $0.002 a query"},
+        "post": {"kind": "none", "cmd": null}
+      },
+      "probe": {"type": "cmd", "argv": ["py", "tools/web.py", "https://example.com", "--ladder"], "ok_codes": [0], "timeout": 90},
+      "human_step": null
+    }
+  }
+}
