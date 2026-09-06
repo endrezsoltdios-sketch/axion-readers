@@ -54,6 +54,7 @@ nothing and saved us a channel more than once.
 | `browserd.py` | Your own browser door: a persistent real-Chrome daemon (Playwright) with your own profile, driven over a local port; halts on a login wall or CAPTCHA instead of guessing | 0 |
 | `yt_reply.py` | Post YouTube comment replies from a fire sheet: target found by verbatim text, dry run by default, refuses to post unless the token's channel matches `--as`, skips anything already replied to, JSONL ledger | 0 |
 | `reddit_api.py` | Reddit's official OAuth rail on a script app you create once: whoami, per-sub `banned` check, rules, search, thread; `comment`/`post` only with `--human-fired` | 0 |
+| `botauth.py` | Web Bot Auth for your own readers: generate an Ed25519 key, publish it (signed) at `/.well-known/http-message-signatures-directory`, sign every request with `Signature-Agent` / `Signature-Input` / `Signature` (RFC 9421), test against Cloudflare's checker. Honest identity is the connector: sites that verify signed agents let you in on purpose. `web.py --signed` uses it | 0 (`cryptography`) |
 | `cf.py` | Cloudflare from the command line on the token wrangler already uses: workers, zones, per-Worker requests/errors (GraphQL), zone traffic, KV key lists, live tail; prints CONFIGURED-OUT for what the token cannot do | 0 |
 | `gads.py` / `gads_auth.py` | Google Ads API connector, dry-run by default, every mutation logs its old value for rollback | 0 |
 | `indexnow.py` | Push URLs to IndexNow (Bing, Yandex, Seznam, Naver share one endpoint) | 0 |

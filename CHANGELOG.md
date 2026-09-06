@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.1 — 6 September 2026
+
+- `botauth.py` — Web Bot Auth for your own readers (IETF draft-meunier-web-bot-auth-architecture, RFC 9421 signatures, RFC 8037 thumbprints): `keygen`, `headers`, `test` (Cloudflare's crawltest.com checker), `verify-directory`, `selftest`. A Cloudflare Workers module that serves the signed key directory is in the same family (see the Axion Open worker); the directory response must itself be signed or it can be mirrored.
+- `web.py --signed` — attach the three signature headers to a page fetch.
+- Field note: a PKCS8 secret piped into a Worker arrives with a trailing newline; strip whitespace before base64 padding arithmetic or the first deploy returns 500.
+
 ## v0.2.0 — 6 September 2026
 
 **Doors, not scrapers.** Nineteen tools added; the six readers of v0.1 unchanged.
