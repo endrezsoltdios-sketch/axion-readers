@@ -1,0 +1,13 @@
+{
+ "_comment": "Ground truth for task_watchdog.py: what should run and which file proves it ran. Cron fields are LOCAL time ('M H * * *' daily, 'M H * * D' weekly). proof_glob is relative to the repo root; null = honestly UNVERIFIABLE, never OK. 'since' = registration day (fires before it are nobody's failure). 'paused' = deliberately stopped. One-shots past fireAt + grace with no proof are MISSED. Copy to knowledge/tasks_registry.json and grow the file.",
+ "grace_hours_default": 6,
+ "tasks": [
+  {"id": "morning-sweep", "type": "cron", "cron": "45 6 * * *", "proof_glob": "arxiv/SWEEP_*.md", "since": "2026-09-06"},
+  {"id": "weekly-diffwatch", "type": "cron", "cron": "15 9 * * 1", "proof_glob": "diffwatch/*.md"},
+  {"id": "old-lane", "type": "cron", "cron": "0 2 * * *", "proof_glob": null, "paused": true, "note": "stopped 1 Sep; re-enable when the lane returns"}
+ ],
+ "one_shots": [
+  {"id": "renew-something", "type": "one_shot", "fireAt": "2026-09-30T09:15:00", "proof_glob": "renewals/RENEWAL_*.md"}
+ ],
+ "retired": ["a-task-that-no-longer-exists"]
+}

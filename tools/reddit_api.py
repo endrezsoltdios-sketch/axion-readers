@@ -6,7 +6,7 @@ a browser. Reddit's own OAuth API is the door Reddit built for exactly this; a "
 app on the user's account, created once by the user, gives read + write on that account
 with Reddit's knowledge and rate limits (60 req/min). No evasion, no alt accounts.
 
-ONE-TIME USER STEP (Claude never does this): reddit.com/prefs/apps -> "create another
+ONE-TIME USER STEP (for anyone whose account Reddit has approved): reddit.com/prefs/apps -> "create another
 app" -> type: script -> name: Axion door -> redirect uri: http://localhost:8080 ->
 create. Then add four lines to the credentials file:
   REDDIT_CLIENT_ID=<the 14-char id under the app name>

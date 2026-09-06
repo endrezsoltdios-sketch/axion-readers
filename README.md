@@ -12,6 +12,11 @@ where they feed a multi-agent research and publishing pipeline daily.
 
 ## v0.2 — doors, not scrapers
 
+Latest release: **v0.2.4** (6 September 2026) — the arXiv lane (`arxiv_sweep.py`,
+`arxiv_fetch.py`), a read-only Reddit door on public feeds (`reddit.py`), and two
+tools for keeping an agent estate honest (`skill_audit.py`, `task_watchdog.py`).
+See [CHANGELOG.md](CHANGELOG.md).
+
 v0.1 was six readers. v0.2 adds the **door pattern**: for every outside site you
 touch, write down the rail you *own* to it (an official API on your own OAuth, a
 public feed, a plain page fetch, a real browser with your own profile, or a human)
@@ -36,7 +41,10 @@ nothing and saved us a channel more than once.
 | `tiktok_read.py` | TikTok video/profile → the public rehydration payload as JSON (hashtags, indexEnabled, stats); waits for the payload to settle | 0 |
 | `yt_comments.py` | YouTube comment threads + search on your own OAuth token | 0 |
 | `reddit_serp.py` | Reddit sentiment on a topic via Google's index | ~$0.002/query |
+| `reddit.py` | Read-only Reddit door, two rungs: Reddit's public Atom feeds (search, new, thread, `voices` = verbatim quotes with author/date/permalink; paces itself, backs off once on 429, then halts) and `browserd.py` rendering Reddit's JSON (`--deep`: scores, nested replies, rules, about). No write op exists. `python tools/reddit.py voices "parking charge" --subs LegalAdviceUK --num 8` | 0 |
 | `radar.py` | University/lab AI research sweep from a plain-text source list | 0 |
+| `arxiv_sweep.py` | Every new arXiv paper in your categories by metadata (arXiv's own API, no key), scored by whole-word term hits against the lanes in `knowledge/arxiv_lanes.json` (start from `arxiv_lanes.example.json`), seen-ledger so a paper is scored once, ranked markdown shortlist for a reader with judgment. `python tools/arxiv_sweep.py --days 7` | 0 |
+| `arxiv_fetch.py` | Full text of the papers a sweep kept: arXiv's HTML build via `web.py`, abstract page as fallback, 3.2 s pacing, header says which. `python tools/arxiv_fetch.py arxiv/sweep_2026-09-06.json --min-score 4` | 0 |
 
 ### Thinking cheaply
 
@@ -67,6 +75,8 @@ nothing and saved us a channel more than once.
 | `regex_lint.py` | Catch the `"\b"`-in-a-string bug shape: a regex built from a string with single backslashes, control bytes in source, paste-shaped patterns | 0 |
 | `fix_mojibake.py` | Repair cp1252 double-encoding in text files | 0 |
 | `worker_sizes.py` | Measure each Cloudflare Worker's uncompressed bundle size against the plan limit | 0 |
+| `skill_audit.py` | Which Claude Code skills were actually invoked: counts every `Skill` tool call in the project's session transcripts (`~/.claude/projects/<repo>`) against `.claude/commands/*.md` — the evidence for retiring skills nobody reaches for. `python tools/skill_audit.py --days 30` | 0 |
+| `task_watchdog.py` | Catch scheduled-task misses the scheduler hides: a registry (`knowledge/tasks_registry.json`, start from the example) says what should run and which file proves it ran; the tool checks the files, exit 1 on a miss, `--alert` posts to Telegram. `python tools/task_watchdog.py --registry knowledge/tasks_registry.json` | 0 |
 
 ## Quickstart
 
@@ -78,7 +88,12 @@ python tools/door.py probe                                         # which answe
 python tools/cf.py traffic --days 7                                # requests per Worker
 python tools/yt_reply.py queue.json                                # dry run; add --post --as "<channel>" to fire
 python tools/facts.py add "claim" --source "https://..."           # record a verified fact
+python tools/arxiv_sweep.py --days 7                               # ranked new papers, your lanes
+python tools/reddit.py voices "parking charge" --subs LegalAdviceUK # verbatim Reddit voices, no login
 ```
+
+Every tool answers `--help`; the v0.2.4 tools also answer `--selftest` (`reddit.py selftest`)
+with no network, so you can check a copy before trusting it.
 
 Requirements: Python 3.10+. `yt.py`/`transcribe.py` need `yt-dlp` for URL input.
 `pdfx.py` needs `pypdf`. `browserd.py` needs `playwright` + a Chrome. `search.py`
@@ -86,7 +101,9 @@ and `reddit_serp.py` need `DATAFORSEO_LOGIN`/`DATAFORSEO_PASSWORD`. `digest.py`,
 `ask.py`, `transcribe.py` need `GROQ_API_KEY` (free tier). `cf.py` needs
 `CLOUDFLARE_API_TOKEN`. `yt_*.py` need a `youtube_token.json` (Google OAuth refresh
 token, scope `youtube.force-ssl`). `reddit_api.py` needs a Reddit script app (see its
-docstring). Everything else is stdlib only. No tool prints a key.
+docstring); `reddit.py --deep` needs `browserd.py` running. `task_watchdog.py --alert`
+reads `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` from a `.env` beside the tools. Everything
+else is stdlib only. No tool prints a key.
 
 ## The token pipeline
 

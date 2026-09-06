@@ -1,0 +1,94 @@
+{
+ "about": "Terms are scored on title+abstract. weight = how much a hit matters to a lane you run; a paper's score is the sum of distinct term hits (each term counts once). Grow this file, not the code.",
+ "categories": [
+  "cs.AI",
+  "cs.CL",
+  "cs.SE",
+  "cs.CR",
+  "cs.MA",
+  "cs.IR",
+  "cs.CY",
+  "cs.DL"
+ ],
+ "lanes": {
+  "agents-and-the-machine-web (tool use, harnesses, signed agents, crawling, citation)": {
+   "weight": 3,
+   "terms": [
+    "agent harness",
+    "tool use",
+    "multi-agent",
+    "orchestrat",
+    "coding agent",
+    "prompt injection",
+    "agent security",
+    "sandbox",
+    "mcp server",
+    "model context protocol",
+    "tool discovery",
+    "web bot auth",
+    "http message signature",
+    "signed agent",
+    "verified bot",
+    "crawler",
+    "web crawl",
+    "pay per crawl",
+    "citation",
+    "provenance",
+    "attribution",
+    "llms.txt",
+    "robots.txt"
+   ]
+  },
+  "retrieval-and-answers (RAG, grounding, freshness, verification)": {
+   "weight": 2,
+   "terms": [
+    "retrieval-augmented",
+    "rag",
+    "grounding",
+    "hallucination",
+    "citation accuracy",
+    "source attribution",
+    "answer engine",
+    "generative search",
+    "search engine",
+    "freshness",
+    "knowledge cutoff",
+    "fact verification",
+    "claim verification"
+   ]
+  },
+  "efficiency (small models, cost, evaluation)": {
+   "weight": 1,
+   "terms": [
+    "small language model",
+    "local model",
+    "cost",
+    "token efficiency",
+    "inference cost",
+    "open-weight",
+    "distillation",
+    "quantization",
+    "benchmark",
+    "evaluation",
+    "measurement"
+   ]
+  }
+ },
+ "noise": [
+  "diffusion model",
+  "image generation",
+  "protein",
+  "molecule",
+  "quantum",
+  "robot arm",
+  "autonomous driving",
+  "speech recognition",
+  "video generation",
+  "3d reconstruction",
+  "medical imaging",
+  "segmentation",
+  "point cloud",
+  "reinforcement learning from human feedback for games",
+  "federated learning"
+ ]
+}

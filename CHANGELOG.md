@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.2.4 — 6 September 2026
+
+- `arxiv_sweep.py` — every new paper in your arXiv categories, read by metadata through arXiv's own API (no key), scored against the lanes in `knowledge/arxiv_lanes.json` (`knowledge/arxiv_lanes.example.json` ships three neutral lanes: agents and the machine web, retrieval and answers, efficiency). Seen-ledger so a paper is scored once; ranked markdown shortlist. Field note from the first run: term matching must be whole-word — `fine` was hitting `fine-tuning` and `cost` was hitting `costly`.
+- `arxiv_fetch.py` — full text of the papers a sweep kept: arXiv's HTML build through `web.py`, abstract page as fallback, 3.2 s pacing (arXiv's own ask), a header that says which source answered, never invented text.
+- `reddit.py` — read-only Reddit door with two rungs. Feed rung: Reddit's public Atom feeds (`search.rss`, `new.rss`, `<thread>.rss`), no login, no key; measured 6 September 2026: four anonymous requests inside ~5 s draw a 429, so the rung paces at 4 s, backs off once on 429 (Retry-After or 60 s) and then halts rather than loop. Browser rung: `browserd.py` rendering Reddit's JSON for scores, nested replies, rules and about; anonymous rendering returns score 0 on real posts, so scores are only trusted logged in. `voices` writes verbatim quotes with author, date and permalink. There is no post, comment or vote op and the selftest asserts none exists.
+- `skill_audit.py` — which Claude Code skills were actually invoked, counted from the project's session transcripts against the skills on disk. Motivated by arXiv 2608.11888 ("Agent Skills Can Be Harmful"): zero invocations in a window is the evidence a retire decision needs. The transcript directory is derived from the repo path the way Claude Code names it.
+- `task_watchdog.py` — catch scheduled-task misses the scheduler hides. Field note (1 September 2026): the Claude Code scheduler keeps run state server-side and silently disables one-shots whose fire time passes while the app is closed — two builds were lost in three days while transcript-based checks said "0 overdue". The fix is to trust only artifacts: a registry (`knowledge/tasks_registry.example.json`) names the proof file each run must produce.
+- Release gate: importing any published tool must not touch the network (connect and urlopen patched to raise in a subprocess import). Every v0.2.4 tool answers `--selftest` (`reddit.py selftest`) with no network.
+
 ## v0.2.3 — 6 September 2026
 
 - `facts.py` — `add --supersedes "<old claim>"` retires the fact it replaces at write time and points it at the new one; `find` hides retired rows (`--all` shows them); `stale` skips them. Motivated by three papers in the same month (arXiv 2608.20685, 2608.07933, 2608.09393): a superseded fact must be retired, not ranked lower. `FACTS_STORE` env var overrides the ledger path for tests.
