@@ -44,7 +44,7 @@ nothing and saved us a channel more than once.
 |------|---------|------|
 | `digest.py` | Big text → small structured first-pass digest via a free-tier model | free tier |
 | `ask.py` | Any question → free model, output labelled as a draft | free tier |
-| `facts.py` | Append-only ledger of source-verified facts with age tracking — check it BEFORE re-verifying anything | 0 |
+| `facts.py` | Ledger of source-verified facts with age tracking — check it BEFORE re-verifying anything; `add --supersedes "<old claim>"` retires the fact it replaces at write time, so a stale value is never served as current (`find --all` shows retired rows) | 0 |
 
 ### Doors — connect, probe, post (human-fired)
 

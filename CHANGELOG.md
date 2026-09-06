@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.3 — 6 September 2026
+
+- `facts.py` — `add --supersedes "<old claim>"` retires the fact it replaces at write time and points it at the new one; `find` hides retired rows (`--all` shows them); `stale` skips them. Motivated by three papers in the same month (arXiv 2608.20685, 2608.07933, 2608.09393): a superseded fact must be retired, not ranked lower. `FACTS_STORE` env var overrides the ledger path for tests.
+
 ## v0.2.2 — 6 September 2026
 
 - `cfdash.py` — drive a never-idle dashboard (Cloudflare's) in a Chrome started with `--remote-debugging-port`, one command per call over CDP. Built because both a browser extension waiting for document_idle and a single-threaded Playwright daemon wedge on such pages. Stops at login walls; `evalfile` runs multi-line JS from a file because shell quoting mangles it.
