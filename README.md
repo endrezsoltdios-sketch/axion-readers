@@ -51,6 +51,7 @@ nothing and saved us a channel more than once.
 | Tool | One job | Cost |
 |------|---------|------|
 | `door.py` | One front door to every site: `list` the rails you own, `probe` them (OK / FAIL / CONFIGURED-OUT), `open` a read rail, `post` only with `--human-fired "<the user's words>"` (logged). Registry = `doors.json`, grow the file not the code | 0 |
+| `cfdash.py` | Drive a dashboard that never goes idle (Cloudflare's, for one) in a Chrome you started with `--remote-debugging-port`: one command per call over CDP — `goto`, `text`, `shot`, `click`, `fill`, `select`, `eval`, `evalfile`. Waits for domcontentloaded plus a fixed settle, never types a password, prints `login_wall: true` and stops when it meets one | 0 (`playwright`) |
 | `browserd.py` | Your own browser door: a persistent real-Chrome daemon (Playwright) with your own profile, driven over a local port; halts on a login wall or CAPTCHA instead of guessing | 0 |
 | `yt_reply.py` | Post YouTube comment replies from a fire sheet: target found by verbatim text, dry run by default, refuses to post unless the token's channel matches `--as`, skips anything already replied to, JSONL ledger | 0 |
 | `reddit_api.py` | Reddit's official OAuth rail on a script app you create once: whoami, per-sub `banned` check, rules, search, thread; `comment`/`post` only with `--human-fired` | 0 |

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.2 — 6 September 2026
+
+- `cfdash.py` — drive a never-idle dashboard (Cloudflare's) in a Chrome started with `--remote-debugging-port`, one command per call over CDP. Built because both a browser extension waiting for document_idle and a single-threaded Playwright daemon wedge on such pages. Stops at login walls; `evalfile` runs multi-line JS from a file because shell quoting mangles it.
+
 ## v0.2.1 — 6 September 2026
 
 - `botauth.py` — Web Bot Auth for your own readers (IETF draft-meunier-web-bot-auth-architecture, RFC 9421 signatures, RFC 8037 thumbprints): `keygen`, `headers`, `test` (Cloudflare's crawltest.com checker), `verify-directory`, `selftest`. A Cloudflare Workers module that serves the signed key directory is in the same family (see the Axion Open worker); the directory response must itself be signed or it can be mirrored.
