@@ -12,7 +12,7 @@ where they feed a multi-agent research and publishing pipeline daily.
 
 ## v0.2 — doors, not scrapers
 
-Latest release: **v0.2.4** (6 September 2026) — the arXiv lane (`arxiv_sweep.py`,
+Latest release: **v0.2.5** (6 September 2026, pace fix for `reddit.py`; v0.2.4 the same day added the arXiv lane) — the arXiv lane (`arxiv_sweep.py`,
 `arxiv_fetch.py`), a read-only Reddit door on public feeds (`reddit.py`), and two
 tools for keeping an agent estate honest (`skill_audit.py`, `task_watchdog.py`).
 See [CHANGELOG.md](CHANGELOG.md).

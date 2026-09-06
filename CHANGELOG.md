@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.5 — 6 September 2026
+
+- `reddit.py`: feed rung pace 4 s → 30 s. Re-measured the same afternoon from a second IP: Reddit's anonymous Atom/RSS budget is about one request per 30 s per IP (30/60/90 s gaps answered 200 every time; 8–20 s gaps drew 429s, and a 429 spends budget too). The dawn reading of "~10 requests per burst" was stale by evening — a rate limit measured once is a claim, not a fact.
+
 ## v0.2.4 — 6 September 2026
 
 - `arxiv_sweep.py` — every new paper in your arXiv categories, read by metadata through arXiv's own API (no key), scored against the lanes in `knowledge/arxiv_lanes.json` (`knowledge/arxiv_lanes.example.json` ships three neutral lanes: agents and the machine web, retrieval and answers, efficiency). Seen-ledger so a paper is scored once; ranked markdown shortlist. Field note from the first run: term matching must be whole-word — `fine` was hitting `fine-tuning` and `cost` was hitting `costly`.

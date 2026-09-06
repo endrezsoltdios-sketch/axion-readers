@@ -6,8 +6,8 @@ old.reddit now demands a login for anything; the in-app pane blocks reddit by po
 Reddit's API rail needs an app it has approved (reddit_api.py). What Reddit
 DOES still publish to anyone, no login and no key, is its Atom feeds: /r/<sub>/search.rss,
 /r/<sub>/new.rss and <thread>.rss (post + comments, author + date + text, no scores).
-Measured 6 Sep 2026: 200 to a plain fetch; 429 after four requests inside ~5 s — so the
-feed rung paces itself at 2.5 s and HALTS on 429 instead of retrying.
+Measured 6 Sep 2026 (16:35-16:45, VPS): about ONE anonymous feed request per 30 s per IP; shorter gaps
+draw 429s. The feed rung paces itself at FEED_PAUSE and HALTS on 429 instead of retrying.
 
 TWO RUNGS, honest about which answered:
   feed      stdlib Atom (default) — search, new, thread text, voices. No scores, top-level
@@ -38,7 +38,7 @@ BROWSERD = ROOT / "tools" / "browserd.py"
 DOSSIERS = ROOT / "reddit" / "dossiers"
 VOICES = ROOT / "reddit" / "voices"
 PAUSE = 2.0          # browser rung
-FEED_PAUSE = 4.0     # feed rung — measured 6 Sep 2026: 4 requests in ~5 s = 429, and the budget is per minute, not per burst
+FEED_PAUSE = 30.0    # feed rung — re-measured 6 Sep 2026 16:35-16:45 from the VPS: 30/60/90 s gaps = 200 every time; 8-20 s gaps = 429s (and a 429 spends budget too). 4 s was the 05:00 reading and is stale.
 FEED_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
            "Accept": "application/atom+xml, application/xml, text/xml, */*"}
 NS = {"a": "http://www.w3.org/2005/Atom"}
