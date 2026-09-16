@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """diffwatch.py — page change watcher. One job: tell me what changed on a page
 since I last looked, and nothing when nothing changed.
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """indexnow.py — push URLs to IndexNow (Bing, Yandex, Seznam, Naver share one endpoint). 5 Sep 2026.
 
 Each site already serves its IndexNow key at /<key>.txt (see src/index.js). Google does not

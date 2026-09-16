@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """cf.py -- Axion's own Cloudflare connector (Fig Tree primitive, 6 Sep 2026).
 
 Why: the Cloudflare MCP servers need an OAuth flow this session cannot run, and the

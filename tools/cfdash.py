@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """cfdash.py -- drive a logged-in Chrome over CDP, one command per call (Fig Tree primitive, 6 Sep 2026).
 
 Why: two dashboards we need (Cloudflare's Bot Submission Form and Pay Per Crawl) have NO API,

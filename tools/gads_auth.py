@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """gads_auth.py — one-time OAuth setup for the Google Ads connector.
 
 Run: py scripts\\gads_auth.py

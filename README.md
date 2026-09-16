@@ -10,9 +10,27 @@ an honest line instead of a traceback.
 Built and field-tested in production at [Axion Labs](https://getaxionlabs.com),
 where they feed a multi-agent research and publishing pipeline daily.
 
+## v0.3 — three tools as skills
+
+Latest release: **v0.3.0** (16 September 2026). The three tools we reach for most inside agent sessions now
+ship as installable skills under `skills/`, each a `SKILL.md` plus the tool it drives, so an agent can load the
+instructions and the command together:
+
+```bash
+npx skills add endrezsoltdios-sketch/axion-readers            # pick wordy-audit, library, guard
+```
+
+| Skill | One job |
+|---|---|
+| `wordy-audit` | Measure a page against the "too many words" checklist and put the page that ranks for the same keyword beside it: words, above-the-fold words, H2s, eyebrows, CTAs, em-dashes, real images, repeated sentences, keyword in the H1. Our own pages read 3,000-5,600 words with 43-265 dashes and no images; the pages that outrank them read 1,100-1,400 words, 0-26 dashes, 5-6 images. |
+| `library` | Search your own notes, research and decisions by meaning before writing anything new: BM25 over every paragraph, stdlib only, no embeddings, no keys, ~2 s for 700 files. Prints score, `file:line`, snippet. |
+| `guard` | A local policy engine for agent tool calls: request (principal, resource, action) meets a YAML policy, gets ALLOW / DENY / ASK, and every decision is evidence. Claude Code PreToolUse adapter, shadow mode, replay of real traces, hash-chain seal and verify, audit for redundant calls and overreach. Adapters classify, only the policy decides; the selftest asserts that adding an adapter changes no decision. |
+
+The same three files live in `tools/` for plain command-line use. See [CHANGELOG.md](CHANGELOG.md).
+
 ## v0.2 — doors, not scrapers
 
-Latest release: **v0.2.5** (6 September 2026, pace fix for `reddit.py`; v0.2.4 the same day added the arXiv lane) — the arXiv lane (`arxiv_sweep.py`,
+v0.2.5 (6 September 2026, pace fix for `reddit.py`; v0.2.4 the same day added the arXiv lane) brought the arXiv lane (`arxiv_sweep.py`,
 `arxiv_fetch.py`), a read-only Reddit door on public feeds (`reddit.py`), and two
 tools for keeping an agent estate honest (`skill_audit.py`, `task_watchdog.py`).
 See [CHANGELOG.md](CHANGELOG.md).
@@ -68,6 +86,14 @@ nothing and saved us a channel more than once.
 | `gads.py` / `gads_auth.py` | Google Ads API connector, dry-run by default, every mutation logs its old value for rollback | 0 |
 | `indexnow.py` | Push URLs to IndexNow (Bing, Yandex, Seznam, Naver share one endpoint) | 0 |
 
+### Measuring pages and searching your own corpus
+
+| Tool | One job | Cost |
+|------|---------|------|
+| `wordy_audit.py` | One page against the too-many-words checklist, the ranking page beside it. `python tools/wordy_audit.py https://yours.com/p --winner https://theirs.com/p --kw "keyword"`; `--json`; `--selftest` | 0 |
+| `library.py` | BM25 search over your own markdown folders (`LIBRARY_ROOTS`), cached index, `file:line` hits. `python tools/library.py "refund policy" --top 5` | 0 |
+| `guard.py` | Policy decisions for tool calls with evidence: `init`, `check`, `explain`, `hook --shadow`, `replay`, `audit`, `seal`, `verify`, `selftest` | 0 (`pyyaml`) |
+
 ### Keeping code honest
 
 | Tool | One job | Cost |
@@ -92,14 +118,14 @@ python tools/arxiv_sweep.py --days 7                               # ranked new 
 python tools/reddit.py voices "parking charge" --subs LegalAdviceUK # verbatim Reddit voices, no login
 ```
 
-Every tool answers `--help`; the v0.2.4 tools also answer `--selftest` (`reddit.py selftest`)
-with no network, so you can check a copy before trusting it.
+Every tool answers `--help`; the v0.2.4 and v0.3.0 tools also answer `--selftest` (`reddit.py selftest`,
+`guard.py selftest`) with no network, so you can check a copy before trusting it.
 
 Requirements: Python 3.10+. `yt.py`/`transcribe.py` need `yt-dlp` for URL input.
 `pdfx.py` needs `pypdf`. `browserd.py` needs `playwright` + a Chrome. `search.py`
 and `reddit_serp.py` need `DATAFORSEO_LOGIN`/`DATAFORSEO_PASSWORD`. `digest.py`,
 `ask.py`, `transcribe.py` need `GROQ_API_KEY` (free tier). `cf.py` needs
-`CLOUDFLARE_API_TOKEN`. `yt_*.py` need a `youtube_token.json` (Google OAuth refresh
+`CLOUDFLARE_API_TOKEN`. `guard.py` needs `pyyaml`. `yt_*.py` need a `youtube_token.json` (Google OAuth refresh
 token, scope `youtube.force-ssl`). `reddit_api.py` needs a Reddit script app (see its
 docstring); `reddit.py --deep` needs `browserd.py` running. `task_watchdog.py --alert`
 reads `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` from a `.env` beside the tools. Everything
@@ -133,7 +159,8 @@ own workflows; you may not offer these tools (or substantially similar
 derivatives) as a competing product or service. Converts to Apache 2.0 two
 years after each release. Copyright 2026 Axion Labs (Zsolt Dios).
 
-Commercial licensing, hosted versions, questions, corrections: **hello@getaxionlabs.com**
+Commercial licensing, hosted versions (weekly wordy audits of a whole site with the referring-domain count beside
+each row; managed guard policies), questions, corrections: **hello@getaxionlabs.com**
 
 ## From the same workshop
 

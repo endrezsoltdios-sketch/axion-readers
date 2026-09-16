@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """sitemap.py — read any site's sitemap. One job: the full URL inventory of a
 site, with lastmod dates, without crawling it.
 

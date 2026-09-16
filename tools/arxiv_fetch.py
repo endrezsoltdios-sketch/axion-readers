@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """arxiv_fetch.py -- pull the full text of the papers a sweep kept, for a cheap reader to read locally.
 
   py scripts/arxiv_fetch.py arxiv/sweep_2026-09-06.json [--min-score 4] [--max 80]

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """reddit.py — Axion's own READ-ONLY Reddit door (Fig Tree primitive, 4 Sep 2026; feed rung 6 Sep 2026).
 
 Why: the Claude-in-Chrome extension waits for document_idle and Reddit never idles;

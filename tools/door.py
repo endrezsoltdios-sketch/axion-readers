@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """door.py -- one front door to every site Axion touches (Fig Tree primitive, 6 Sep 2026).
 
 Why: fourteen sites, fourteen tools, fourteen ways to find out whether a rail is

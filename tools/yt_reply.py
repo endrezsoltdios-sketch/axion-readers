@@ -1,3 +1,4 @@
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """yt_reply.py -- post YouTube comment replies from a fire sheet. Human-fired only.
 
 Built 6 Sep 2026 when the user asked "can't you paste the answers to them?" about

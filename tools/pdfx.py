@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """pdfx.py — PDF in, text or markdown out. One job: read a PDF without opening it.
 
 Built 1 Sep 2026 (tool factory wave 2). The one wave-2 tool with a dependency:

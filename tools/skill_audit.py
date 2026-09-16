@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """skill_audit.py -- which skills were actually invoked, from the session transcripts (6 Sep 2026).
 
 Why: arXiv 2608.11888 "Agent Skills Can Be Harmful" (verified 6 Sep 2026) measured 307 skill-induced

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """reddit_serp.py — Reddit sentiment via Google's index (DataForSEO SERP API).
 
 Fallback after Reddit declined our Data API registration (31 Aug 2026): we read

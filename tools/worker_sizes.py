@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """worker_sizes.py — measure each fact-site Worker's UNCOMPRESSED bundle size
 against Cloudflare's 64 MiB limit. Zero tokens, zero keys, no deploy.
 

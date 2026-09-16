@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """yt_comments.py — read YouTube comment threads through our OWN OAuth token (Fig Tree primitive, 4 Sep 2026).
 
 Written by the denialfacts customer-voice pass when vidIQ ran out of credits. Reads only; uses the

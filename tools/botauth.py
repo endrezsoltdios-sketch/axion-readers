@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """botauth.py -- Web Bot Auth for OUR OWN readers (Fig Tree primitive, 6 Sep 2026).
 
 Why: the user asked for connectors that reach any site. The honest mechanism the web is

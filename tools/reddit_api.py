@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """reddit_api.py -- Reddit's OFFICIAL API rail (Fig Tree primitive, 6 Sep 2026).
 
 Why: Reddit refuses logins in automation Chrome, so scripts/reddit.py stays read-only over

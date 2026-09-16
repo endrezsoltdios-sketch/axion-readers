@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.3.0 — 16 September 2026
+
+- Skills: `skills/wordy-audit`, `skills/library`, `skills/guard` — a `SKILL.md` (name, one-paragraph description, how to read the output) beside the tool it drives, installable with `npx skills add endrezsoltdios-sketch/axion-readers`. The release gate now copies each skill's tool from `tools/` and checks the frontmatter, the description length and the private-string scan on the skill text too.
+- `wordy_audit.py` — one page against the too-many-words checklist (words, above-the-fold words, H2s, eyebrows, CTAs, em- and en-dashes, real images, repeated sentences, keyword in the H1, the first line after it), the ranking page beside it with `--winner`, `--json`, `--selftest` on a fixture document. Field note: a class-named eyebrow that also sits right before a heading counts on both rules; compare two pages read by the same tool rather than trusting one row.
+- `library.py` — BM25 over every paragraph of the markdown folders you name in `LIBRARY_ROOTS` (default `docs`, `notes`, `README.md`), plus the Claude Code memory folder when one exists; index cached and rebuilt on any change; per-file cap so one long file cannot fill the top ten; `--selftest` plants a line and proves rebuild-on-change and delete.
+- `guard.py` — local policy engine for tool calls: `init` writes a starter `.guard/policy.yaml`; `check` / `explain` decide one request; `hook --shadow` is a Claude Code PreToolUse adapter that logs and never blocks; `replay` re-decides a recorded trace; `audit` names redundant identical calls and overreach; `seal` / `verify` hash-chain a day's events and print the first broken index. Explicit deny beats ask beats allow; no match is deny; malformed is deny. Adapters classify, policy decides, and the selftest asserts that adding an adapter changes no decision.
+- Every tool now carries the copyright header and this repo carries `PROVENANCE.md`: a dated, public record of what each published tool does and the hash it shipped with (prior art).
+
+
 ## v0.2.5 — 6 September 2026
 
 - `reddit.py`: feed rung pace 4 s → 30 s. Re-measured the same afternoon from a second IP: Reddit's anonymous Atom/RSS budget is about one request per 30 s per IP (30/60/90 s gaps answered 200 every time; 8–20 s gaps drew 429s, and a 429 spends budget too). The dawn reading of "~10 requests per burst" was stale by evening — a rate limit measured once is a claim, not a fact.

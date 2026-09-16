@@ -1,3 +1,4 @@
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """fix_mojibake — repair cp1252 double-encoding in text files. Zero model tokens.
 
 The wound: text that was already UTF-8 got decoded as cp1252 and re-encoded as

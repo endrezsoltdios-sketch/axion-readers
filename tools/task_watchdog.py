@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """task_watchdog.py — catches scheduled-task misses the scheduler hides.
 
 Why this exists (measured 1 Sep 2026): the Claude Code scheduler keeps all run
@@ -59,11 +60,27 @@ def last_cron_fire(cron, now):
     if len(parts) != 5:
         return None
     minute, hour, dom, mon, dow = parts
-    if dom != "*" or mon != "*":
+    if mon != "*":
         return None
     try:
         m, h = int(minute), int(hour)
     except ValueError:
+        return None
+    if dom != "*":
+        # monthly 'M H D * *' (added 11 Sep 2026: demand-map-monthly read UNPARSEABLE)
+        try:
+            d = int(dom)
+        except ValueError:
+            return None
+        cand = now.replace(day=1, hour=h, minute=m, second=0, microsecond=0)
+        for _ in range(3):
+            try:
+                c = cand.replace(day=d)
+            except ValueError:
+                c = None
+            if c is not None and c <= now:
+                return c
+            cand = (cand - timedelta(days=1)).replace(day=1)
         return None
     cand = now.replace(hour=h, minute=m, second=0, microsecond=0)
     if dow == "*":
@@ -138,7 +155,12 @@ def check(registry_path, now=None, task_dir=TASK_DIR):
                          f"or re-arm via update_scheduled_task.")
 
     for t in reg.get("one_shots", []):
-        fire = datetime.fromisoformat(t["fireAt"])
+        fire_raw = t.get("fireAt") or t.get("when")
+        if not fire_raw:
+            missed.append(t["id"])
+            lines.append(f"UNPARSEABLE {t['id']}: one-shot has no fireAt/when — fix registry")
+            continue
+        fire = datetime.fromisoformat(fire_raw)
         if now < fire + grace:
             ok.append(t["id"])
             lines.append(f"PENDING {t['id']}: one-shot due {fire:%d %b %H:%M}")

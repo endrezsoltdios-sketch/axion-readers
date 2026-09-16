@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """browserd — Axion's own browser door (Fig Tree primitive, 2 Sep 2026).
 
 A local Playwright daemon with a PERSISTENT profile, driven by one-line commands.

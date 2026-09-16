@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) 2026 Axion Labs / Zsolt Dios. Licensed under FSL-1.1-ALv2 (see LICENSE). Dated provenance: PROVENANCE.md.
 """ask.py — the free wing on the command line. One job: put a question to a free
 model and print the answer, labelled so it is never mistaken for frontier work.
 
