@@ -19,6 +19,7 @@ Publisher: Axion Labs (hello@getaxionlabs.com). Registry of all doors: https://o
 | Path | What it is |
 |---|---|
 | `/llms.txt` | The site in plain text for a language model, with a checked date |
+| `<page>.md` (home: `/index.md`) | The markdown twin of any page: the same text an agent gets with `Accept: text/markdown`, at its own URL, canonical to the HTML page (denialfacts.com, nycticketfacts.com, mtdfacts.co.uk, screeningfacts.com since 21 Sep 2026) |
 | `/.well-known/terms.txt` | Machine-access terms: what is free, what is priced, how to attribute |
 | `/.well-known/agent-door.json` | The door passport: endpoints, caps, citation shape, and `pricing.paid_doors`: each priced door with its price, its state on that zone (live or dormant, from the door's own flag), the free allowance a named key gets, and the fields the call returns |
 | `/.well-known/api-catalog` | The API catalog (RFC 9727 shape) |
