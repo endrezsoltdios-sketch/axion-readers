@@ -27,7 +27,7 @@ Stdlib only, no keys, read-only. A page that will not load prints the error stri
 - `eyebrows`, `ctas`, `h2`: page furniture. A class-named eyebrow that also sits right before a heading counts on
   both rules; the number is for comparing two pages read by the same tool, not an absolute.
 - `repeated`: sentences of eight or more words that appear twice. Anything above 0 is a template leak.
-- `kw_in_h1` and `after_h1`: whether the keyword is in the first H1 and what the reader meets right after it.
+- `kw_in_h1` and `after_h1`: whether the keyword is in the first H1, read the way an engine reads it (case and punctuation dropped, so "Parking violation, New York" carries "parking violation new york"), and what the reader meets right after it. No keyword given: `n/a`, never a fail.
 
 ## What to do with it
 

@@ -38,7 +38,7 @@ Release: v0.3.0, 16 September 2026. The three skills (`skills/*/SKILL.md`) carry
 | tiktok_read.py | 9c33cea08e514afa | tiktok_read — 0-token reader for TikTok's PUBLIC rehydration payload. |
 | transcribe.py | 2438889c69135043 | transcribe.py — audio or video in, text out. One job: turn a media file into |
 | web.py | e979446ef087f3f7 | web.py — read any web page as clean text. One job: URL in, readable text out. |
-| wordy_audit.py | 609f238d0c5477fe | wordy_audit.py - measure a page against the "too many words" checklist (Edward Sturm, 14 Sep 2026, watch?v=2Al_GYBMVmg) |
+| wordy_audit.py | 6153021e55f8b9ae | wordy_audit.py - measure a page against the "too many words" checklist (Edward Sturm, 14 Sep 2026, watch?v=2Al_GYBMVmg) |
 | worker_sizes.py | dbd922780fbe0318 | worker_sizes.py — measure each fact-site Worker's UNCOMPRESSED bundle size |
 | yt.py | 5ac045a6cb57d26c | yt.py — read a YouTube video as clean text. One job: URL in, transcript out. |
 | yt_comments.py | 09ff98535d35119b | yt_comments.py — read YouTube comment threads through our OWN OAuth token (Fig Tree primitive, 4 Sep 2026). |
