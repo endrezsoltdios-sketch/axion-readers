@@ -20,7 +20,7 @@ Publisher: Axion Labs (hello@getaxionlabs.com). Registry of all doors: https://o
 |---|---|
 | `/llms.txt` | The site in plain text for a language model, with a checked date |
 | `/.well-known/terms.txt` | Machine-access terms: what is free, what is priced, how to attribute |
-| `/.well-known/agent-door.json` | The door passport: endpoints, caps, citation shape |
+| `/.well-known/agent-door.json` | The door passport: endpoints, caps, citation shape, and `pricing.paid_doors`: each priced door with its price, its state on that zone (live or dormant, from the door's own flag), the free allowance a named key gets, and the fields the call returns |
 | `/.well-known/api-catalog` | The API catalog (RFC 9727 shape) |
 | `/for-agents` and `/for-agents.json` | What an agent can do here, in one page |
 | `/api/bulk` | The whole dataset in one pull; priced where a price is shown (HTTP 402 with the price in the body) |
