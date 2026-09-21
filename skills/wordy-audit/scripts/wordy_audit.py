@@ -16,6 +16,13 @@ from pathlib import Path
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128 Safari/537.36",
       "Accept-Language": "en-GB,en;q=0.9"}
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def norm_kw(t):
+    """A keyword the way an engine reads it: lower case, punctuation dropped, one space. 21 Sep 2026: an H1 reading
+    "Parking violation, New York" measured kw_in_h1=False for "parking violation new york" on the comma alone, while the
+    build-order gate (same estate, same day) read it as carrying the keyword; the two instruments now agree."""
+    return " ".join(re.sub(r"[^a-z0-9]+", " ", str(t).lower()).split())
 TARGETS = ROOT / "targets"
 ESTATE = {}   # --estate mode: {"site": "https://host"} with a targets/<site>.json beside it; empty in the public copy
 FIELDS = ("words", "atf_words", "h2", "eyebrows", "ctas", "emdash", "imgs", "real_imgs", "repeated", "kw_in_h1")
@@ -51,7 +58,8 @@ def metrics(doc, kw=""):
     imgs = re.findall(r"<img[^>]*src=\"([^\"]+)\"", body, re.I)
     real = [i for i in imgs if not re.search(r"logo|icon|svg|sprite|pixel|badge|avatar", i, re.I)]
     atf = text[:1200]                       # above the fold ~ first 1200 chars of visible text
-    kw_in_h1 = bool(kw) and bool(h1s) and kw.lower() in h1s[0].lower()
+    # None when no keyword names this page (printed n/a): a page with no target row is not a page that failed the test
+    kw_in_h1 = (norm_kw(kw) in norm_kw(h1s[0])) if (kw and h1s) else (None if not kw else False)
     sents = [s.strip() for s in re.split(r"[.!?]\s", text) if len(s.split()) >= 8]
     rep = sum(1 for s, c in Counter(sents).items() if c > 1)
     after = text.split(h1s[0], 1)[1][:220].strip() if h1s and h1s[0] in text else ""
@@ -75,7 +83,8 @@ def render(rows):
             print("   [unreadable: no body]")
             continue
         print(f"   words={m['words']:5} atf_words={m['atf_words']:4} h2={m['h2']:2} eyebrows={m['eyebrows']:2} ctas={m['ctas']:2} "
-              f"emdash={m['emdash']:3} imgs={m['imgs']:2} real_imgs={m['real_imgs']:2} repeated={m['repeated']}  kw_in_h1={m['kw_in_h1']}")
+              f"emdash={m['emdash']:3} imgs={m['imgs']:2} real_imgs={m['real_imgs']:2} repeated={m['repeated']}  "
+              f"kw_in_h1={'n/a (no target row names this page)' if m['kw_in_h1'] is None else m['kw_in_h1']}")
         print(f"   H1: {m['h1']}\n   after H1: {m['after_h1']}")
     if len(rows) >= 2 and all(r["m"] for r in rows[:2]):
         a, b = rows[0]["m"], rows[1]["m"]
@@ -93,7 +102,10 @@ def estate_rows(targets_dir):
         trows = json.loads(p.read_text(encoding="utf-8"))["rows"]
         top = next((r for r in trows if r.get("our_url", "").startswith("/")), trows[0])
         kw, our, win = top["keyword"], top["our_url"], top["winner_url"]
-        rows.append(audit(base + "/", kw, f"{site} home"))
+        # the home page is measured against ITS OWN target row (our_url "/") or none; 16 Sep to 21 Sep it was measured
+        # against the top target's keyword, which names a different page, and read kw_in_h1=False on every home by design
+        home_row = next((r for r in trows if r.get("our_url", "").startswith("/") and r["our_url"].rstrip("/") == ""), None)
+        rows.append(audit(base + "/", home_row["keyword"] if home_row else "", f"{site} home"))
         rows.append(audit(base + our, kw, f"{site} target"))
         rows.append(audit(win, kw, f"{site} WINNER"))
     return rows
@@ -121,6 +133,10 @@ def selftest():
         fails.append(f"after_h1: {m['after_h1']!r}")
     if "var y" in m["after_h1"] or m["words"] > 60:
         fails.append(f"script text leaked into the count: words={m['words']}")
+    if metrics("<html><body><h1>Parking violation, New York: the odds</h1></body></html>", "parking violation new york")["kw_in_h1"] is not True:
+        fails.append("kw_in_h1: punctuation in the H1 must not hide the keyword")
+    if metrics(FIXTURE, "")["kw_in_h1"] is not None:
+        fails.append("kw_in_h1: no keyword must read None (n/a), not False")
     if metrics("<html><body></body></html>")["h1"] != "NONE":
         fails.append("empty page should report h1 NONE")
     if get("http://127.0.0.1:9/")[1] != "":

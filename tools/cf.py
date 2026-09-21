@@ -5,8 +5,7 @@
 Why: the Cloudflare MCP servers need an OAuth flow this session cannot run, and the
 dashboard is a human door. The account token wrangler already uses answers the REST
 and GraphQL APIs directly, so every number the dashboard shows is one call away.
-Stdlib only. Token: CLOUDFLARE_API_TOKEN from the environment, else the credentials
-file via scripts/sales.py env_key(). Never printed.
+Stdlib only. Token: CLOUDFLARE_API_TOKEN from the environment. Never printed.
 
   py scripts/cf.py verify                          token status + account id
   py scripts/cf.py workers                         every Worker script on the account
@@ -49,14 +48,7 @@ def account():
 def token():
     t = os.environ.get("CLOUDFLARE_API_TOKEN")
     if not t:
-        sys.path.insert(0, str(ROOT / "scripts"))
-        try:
-            import sales
-            t = sales.env_key("CLOUDFLARE_API_TOKEN")
-        except Exception:
-            t = None
-    if not t:
-        print("[no token] CLOUDFLARE_API_TOKEN absent from environment and credentials file")
+        print("[no token] set CLOUDFLARE_API_TOKEN in the environment")
         sys.exit(2)
     return t
 

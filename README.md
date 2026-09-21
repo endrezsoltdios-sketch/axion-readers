@@ -10,9 +10,115 @@ an honest line instead of a traceback.
 Built and field-tested in production at [Axion Labs](https://getaxionlabs.com),
 where they feed a multi-agent research and publishing pipeline daily.
 
+## v0.4 — the agent readiness lane
+
+Latest release: **v0.4.0** (22 September 2026). Six tools and one JavaScript folder for the two halves of making a
+site readable by agents: the Cloudflare doors that have no API, and then finding out who actually came.
+
+Three of these drive a **logged-in Chrome**, because the pages they read have no API at all. Start one by hand,
+log in once, and leave it open:
+
+```bash
+chrome --remote-debugging-port=9226 --user-data-dir=/tmp/cfprofile https://dash.cloudflare.com/
+export CLOUDFLARE_ACCOUNT_ID=<the id in your dashboard URL>
+```
+
+No tool here types a password. A login wall is printed and the tool stops.
+
+### `dns_aid.py` — DNS for AI Discovery records, published and proved
+
+Publishes the DNS-AID entry points a zone needs (`_a2a._agents.<zone>` and `_mcp._agents.<zone>`, SVCB records)
+through the dashboard's own Add record form, then proves each one back over DNS-over-HTTPS before calling it
+done. It skips a record DNS already answers and touches no other record. `--dnssec` presses Enable DNSSEC on the
+zone, because the draft wants signed zones. Written because an API token with zone read and no DNS write cannot
+add these, and the alternative was a person clicking four fields per record per zone.
+
+```bash
+python tools/dns_aid.py example.com example.org      # add what is missing, then verify over DoH
+```
+
+Needs: `CLOUDFLARE_ACCOUNT_ID` and a Chrome on `--remote-debugging-port=9226` logged into the dashboard.
+`MCP_HOST` sets the `_mcp` target (default `mcp.example.com`). `--check` reads DoH only and needs neither.
+
+### `cf_readiness.py` — Cloudflare's Agent Readiness diagnostic, as a file you can diff
+
+Reads Cloudflare's Agent Readiness page for every zone and keeps the answer: the pass mark on each of the 21
+items across four levels, and Cloudflare's own one-line Status under each item ("auth.md exists but OAuth
+Protected Resource Metadata was not found"). The page is a click-per-item accordion with no API, so ten zones by
+hand is an hour of clicking and no record. Writes a JSON file and a markdown table. Nothing is typed, no setting
+is changed, and only the accordion rows are clicked.
+
+```bash
+python tools/cf_readiness.py example.com example.org     # or no zones at all, to read every zone you hold
+```
+
+Needs: `CLOUDFLARE_ACCOUNT_ID`, a Chrome on `--remote-debugging-port=9226` logged into the dashboard, and
+`playwright`. `CLOUDFLARE_API_TOKEN` (Zone Read) only when you name no zones and want them listed for you.
+
+### `cf_bot_submit.py` — the Bots and Agents Directory form, from a JSON spec
+
+Fills and submits Cloudflare's Bots and Agents Directory (BotBase) application for a reader you operate, from a
+JSON spec. The form is React: values go in through the native setter plus an input event, list controls are
+opened with pointer events and their options clicked by text. Every value is read back and compared to the spec
+before anything is pressed, and a mismatch stops the run. `--discover` dumps the form's fields and every list's
+options, which is how you write the spec in the first place.
+
+```bash
+python tools/cf_bot_submit.py botbase/mybot.json     # fill, read back, open the review, screenshot, STOP
+```
+
+Needs: `CLOUDFLARE_ACCOUNT_ID` and a Chrome on `--remote-debugging-port=9226` logged into the dashboard.
+Submitting is human fired: without `--apply` it stops at the review screen.
+
+### `bot_ranges.py` — the address blocks crawler operators publish about themselves
+
+Fetches the IP ranges Google, Bing, OpenAI, Perplexity and Apple publish for their own bots into one JSON file
+and one JavaScript module the edge classifier imports. A user-agent is a claim; these files are how you check it.
+A source that is down is carried over from the previous file, so a bot never turns "impersonated" because a list
+was offline, and `--check` exits 1 once the file is more than 14 days old.
+
+```bash
+python tools/bot_ranges.py       # fetch and write edge/data/bot_ranges.json + .js
+```
+
+Needs: nothing but network access. `BOT_RANGES_UA` sets the user-agent this reader identifies itself with.
+
+### `traffic_read.py` — who was really at the door, read back from the edge meter
+
+Reads the data points the edge meter wrote (see `edge/`) over the Workers Analytics Engine SQL API and prints one
+column per host: people by page view and people confirmed by beacon, browser strings arriving from hosting
+networks, headless browsers, declared AI agents split into verified, impersonated and unproven, crawlers, HTTP
+tools, uptime monitors, your own scanners, and probe paths. Two people numbers, both named for what they are,
+because one of them is always the one someone quotes.
+
+```bash
+python tools/traffic_read.py --days 7 --paths
+```
+
+Needs: `CLOUDFLARE_API_TOKEN` with **Account Analytics Read** and `CLOUDFLARE_ACCOUNT_ID`. `TRAFFIC_HOSTS` is a
+comma-separated column order; leave it unset and the reader uses the hosts it finds. `TRAFFIC_DATASET` names the
+dataset (default `edge_traffic`).
+
+### `cfdash.py` — the dashboard driver the three above use
+
+Already shipped in v0.2.2 and unchanged: one command per call over CDP against a Chrome you started yourself
+(`goto`, `text`, `shot`, `click`, `fill`, `select`, `eval`, `evalfile`). It never types a password and prints
+`login_wall: true` and stops when it meets one.
+
+### `edge/` — the classifier and meter the reader reads
+
+The JavaScript half: `withTrafficMeter(handler)` wraps a Worker and writes one classified Analytics Engine data
+point per outside request, never twice for a handler that re-enters itself. No address, no full user-agent, no
+query string, no cookie and no referrer is stored, and its 126-case suite asserts that. See
+[edge/README.md](edge/README.md).
+
+```bash
+node edge/test/traffic_class.test.mjs
+```
+
 ## v0.3 — three tools as skills
 
-Latest release: **v0.3.0** (16 September 2026). The three tools we reach for most inside agent sessions now
+v0.3.0 (16 September 2026). The three tools we reach for most inside agent sessions now
 ship as installable skills under `skills/`, each a `SKILL.md` plus the tool it drives, so an agent can load the
 instructions and the command together:
 
@@ -86,6 +192,17 @@ nothing and saved us a channel more than once.
 | `gads.py` / `gads_auth.py` | Google Ads API connector, dry-run by default, every mutation logs its old value for rollback | 0 |
 | `indexnow.py` | Push URLs to IndexNow (Bing, Yandex, Seznam, Naver share one endpoint) | 0 |
 
+### Agent readiness and edge traffic (v0.4, sections above)
+
+| Tool | One job | Cost |
+|------|---------|------|
+| `dns_aid.py` | Publish `_a2a._agents` / `_mcp._agents` SVCB records through the dashboard form, prove each back over DNS-over-HTTPS, optionally press Enable DNSSEC | 0 |
+| `cf_readiness.py` | Cloudflare's Agent Readiness diagnostic for every zone as a JSON file and a markdown table, with Cloudflare's own Status line per item | 0 (`playwright`) |
+| `cf_bot_submit.py` | Fill Cloudflare's Bots and Agents Directory form from a JSON spec, read every value back, stop at the review unless `--apply` | 0 |
+| `bot_ranges.py` | The address blocks Google, Bing, OpenAI, Perplexity and Apple publish for their own bots, into one data file | 0 |
+| `traffic_read.py` | Who was at each door, from the edge meter over the Analytics Engine SQL API: people, verified bots, impersonators, tools, headless, monitors, probes | 0 |
+| `edge/` | The Worker-side classifier and meter the reader reads, plus its 126-case suite | 0 |
+
 ### Measuring pages and searching your own corpus
 
 | Tool | One job | Cost |
@@ -121,6 +238,9 @@ python tools/reddit.py voices "parking charge" --subs LegalAdviceUK # verbatim R
 Every tool answers `--help`; the v0.2.4 and v0.3.0 tools also answer `--selftest` (`reddit.py selftest`,
 `guard.py selftest`) with no network, so you can check a copy before trusting it.
 
+The v0.4 tools answer `--selftest` too, with no network and no Chrome:
+`dns_aid.py`, `cf_readiness.py`, `cf_bot_submit.py`, `bot_ranges.py`, `traffic_read.py`.
+
 Requirements: Python 3.10+. `yt.py`/`transcribe.py` need `yt-dlp` for URL input.
 `pdfx.py` needs `pypdf`. `browserd.py` needs `playwright` + a Chrome. `search.py`
 and `reddit_serp.py` need `DATAFORSEO_LOGIN`/`DATAFORSEO_PASSWORD`. `digest.py`,
@@ -128,7 +248,11 @@ and `reddit_serp.py` need `DATAFORSEO_LOGIN`/`DATAFORSEO_PASSWORD`. `digest.py`,
 `CLOUDFLARE_API_TOKEN`. `guard.py` needs `pyyaml`. `yt_*.py` need a `youtube_token.json` (Google OAuth refresh
 token, scope `youtube.force-ssl`). `reddit_api.py` needs a Reddit script app (see its
 docstring); `reddit.py --deep` needs `browserd.py` running. `task_watchdog.py --alert`
-reads `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` from a `.env` beside the tools. Everything
+reads `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` from an environment file beside the tools.
+`dns_aid.py`, `cf_readiness.py` and `cf_bot_submit.py` need `CLOUDFLARE_ACCOUNT_ID` and a
+Chrome started with `--remote-debugging-port=9226` that you logged into yourself;
+`cf_readiness.py` also needs `playwright`. `traffic_read.py` needs a `CLOUDFLARE_API_TOKEN`
+carrying **Account Analytics Read**. `edge/` needs Node 18+ to run its suite. Everything
 else is stdlib only. No tool prints a key.
 
 ## The token pipeline

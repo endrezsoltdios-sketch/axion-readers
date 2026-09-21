@@ -9,6 +9,7 @@ DOES still publish to anyone, no login and no key, is its Atom feeds: /r/<sub>/s
 /r/<sub>/new.rss and <thread>.rss (post + comments, author + date + text, no scores).
 Measured 6 Sep 2026 (16:35-16:45, VPS): about ONE anonymous feed request per 30 s per IP; shorter gaps
 draw 429s. The feed rung paces itself at FEED_PAUSE and HALTS on 429 instead of retrying.
+Ruled 18 Sep 2026 (engineering rule 40): research reads only, paced, nothing republished, never a proxy.
 
 TWO RUNGS, honest about which answered:
   feed      stdlib Atom (default) — search, new, thread text, voices. No scores, top-level

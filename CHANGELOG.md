@@ -1,5 +1,50 @@
 # Changelog
 
+## v0.4.0 — 22 September 2026
+
+The agent readiness lane: the Cloudflare doors that have no API, and then the measurement of who actually came.
+
+- `dns_aid.py` — publish the DNS for AI Discovery entry points for a zone (`_a2a._agents.<zone>` and
+  `_mcp._agents.<zone>`, SVCB) through the dashboard's own Add record form, and prove each one back over
+  DNS-over-HTTPS before calling it done. A record DNS already answers is skipped; no other record is touched.
+  `--dnssec` presses Enable DNSSEC, because the draft wants signed zones. Written because an API token with zone
+  read and no DNS write cannot add these at all, and the manual path is four fields and a Save per record per
+  zone. `CLOUDFLARE_ACCOUNT_ID` and a Chrome on `--remote-debugging-port=9226`; `--check` needs neither.
+- `cf_readiness.py` — Cloudflare's Agent Readiness diagnostic for every zone, kept as a file you can diff: the
+  pass mark on each of the 21 items in four levels, and Cloudflare's own one-line Status under each item once it
+  is opened. The page is a click-per-item accordion with no API. Field note: a zone switch passes through the
+  login URL for a second or two, so only a wall that stays is a wall; and a stray click can navigate away, so
+  every item re-checks the URL and comes back. Needs `playwright`.
+- `cf_bot_submit.py` — Cloudflare's Bots and Agents Directory (BotBase) application from a JSON spec. The form is
+  React (base-ui): values go in through the native property setter plus an input event, list controls are opened
+  with pointer events and their options clicked by text. Every value is read back and compared to the spec before
+  anything is pressed, and a mismatch stops the run. `--discover` dumps the fields and every list's options, which
+  is how the spec gets written. Submitting is human fired: without `--apply` it stops at the review screen.
+- `bot_ranges.py` — the address blocks Google, Bing, OpenAI, Perplexity and Apple publish for their own bots, into
+  one JSON file and one JavaScript module. A user-agent is a claim: Googlebot from a Hetzner box is not Google, and
+  Cloudflare's own verified-bot flag costs an Enterprise plan. A source that is down is carried over from the
+  previous file, so a bot never turns "impersonated" because a list was offline. Field note: the classifier imports
+  a JavaScript module rather than the JSON, because Node refuses a JSON import without an attribute while a plain
+  module needs no loader hook in any suite.
+- `traffic_read.py` — who was really at each door, read back from the edge meter over the Workers Analytics Engine
+  SQL API: people by page view and people confirmed by beacon, browser strings from hosting networks, headless
+  browsers, declared AI agents split into verified, impersonated and unproven, crawlers, HTTP tools, monitors, your
+  own scanners, probe paths. Two people numbers are printed and both are named for what they are, because one of
+  them is always the one that gets quoted. Needs a token with Account Analytics Read.
+- `edge/` — the JavaScript half, as a second folder: `traffic_class.js` (the classifier: address maths against the
+  published blocks, path classes, browser-versus-script evidence), `traffic_meter.js` (`withTrafficMeter(handler)`,
+  one Analytics Engine data point per outside request, never twice for a handler that re-enters its own `fetch`, a
+  thrown handler metered as 500 and re-thrown untouched, a failing store never breaking a page), `traffic_checks.js`
+  (the same contract asserted against your own worker from your own suite), the 126-case suite and the generated
+  range table. No address, no full user-agent, no query string, no cookie and no referrer is stored, and the suite
+  asserts that rather than promising it.
+- Release gate: the JavaScript folder goes through the same substitution and private-string rules as the tools, and
+  then its suite is run with `node` against the **published** copy, so a released classifier is proved rather than
+  assumed. Our own account id is now an environment variable (`CLOUDFLARE_ACCOUNT_ID`) with a clear error when it
+  is absent, rather than a constant anyone could paste into a run against someone else's zone.
+- `cf.py` — the public copy no longer names a credentials file: `CLOUDFLARE_API_TOKEN` comes from the environment,
+  and the error says so.
+
 ## v0.3.0 — 16 September 2026
 
 - Skills: `skills/wordy-audit`, `skills/library`, `skills/guard` — a `SKILL.md` (name, one-paragraph description, how to read the output) beside the tool it drives, installable with `npx skills add endrezsoltdios-sketch/axion-readers`. The release gate now copies each skill's tool from `tools/` and checks the frontmatter, the description length and the private-string scan on the skill text too.
