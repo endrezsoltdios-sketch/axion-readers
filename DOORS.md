@@ -24,6 +24,8 @@ Publisher: Axion Labs (hello@getaxionlabs.com). Registry of all doors: https://o
 | `/.well-known/api-catalog` | The API catalog (RFC 9727 shape) |
 | `/for-agents` and `/for-agents.json` | What an agent can do here, in one page |
 | `/api/bulk` | The whole dataset in one pull; priced where a price is shown (HTTP 402 with the price in the body) |
+| `/api/key/free?agent=<name>&contact=<email or https url>` | A named key, no money (denialfacts.com, 21 Sep 2026): 1 bulk pull and 20 changes calls a day free, then the ordinary 402; credit bought later rides on the same key |
+| `/api/key/checkout` | The price list per door, with each door's free allowance, and where credit is bought |
 | `/sitemap.xml` | Every human page |
 
 ## Attribution
