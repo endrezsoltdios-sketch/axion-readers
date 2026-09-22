@@ -1,5 +1,84 @@
 # Changelog
 
+## v0.5.0 — 22 September 2026
+
+The buyer-and-agent lane: ten readers that ask, from outside, whether a machine buyer and a machine reader can
+actually get in, and two repairs. Every tool answers `--selftest` with no network and `--help` with exit 0.
+
+- `buyer_probe.py` — walk the path a plain, JavaScript-free, unsigned machine buyer walks: front door, catalog,
+  service description, priced operation, the 402, the price inside it, the payment destination, the checkout link,
+  and a wrong key refused. It also reads seven edge settings by their effect from outside, because most of them are
+  only visible in a dashboard: Browser Integrity Check (the priced path as `Python-urllib` and `libwww-perl` must
+  not answer 403 or carry `error code: 1010`), challenge actions, robots.txt per host, a hostname with no route,
+  5xx read as an edge-to-origin fault, the resource URL written into the envelope, a Pages fallback answering 200
+  to everything, plus the CORS preflight and an uncacheable 402. Field finding on the first live run: a zone-level
+  integrity check answered 403 to `Python-urllib` and `libwww-perl` before any Worker code ran, while `curl` and
+  `python-requests` passed, so a buyer whose script never set a user agent could not reach the price at all.
+  Nothing is posted: the checkout link is read with HEAD, and with GET only when HEAD is refused.
+- `a2a_audit.py` — every agent card a host publishes, against ten public A2A card rules: unsigned card, weak or
+  foreign-origin signature, cleartext endpoint, SSRF-shaped endpoint, prompt injection in card text, a
+  high-privilege skill with no authentication, a deprecated OAuth flow, an apiKey in the query string, an extended
+  card with no authentication, and the required fields. Every row carries the JSON path it looked at, so a FAIL
+  names the field to change. A rule that cannot apply is NA and never a pass: an unsigned card cannot have a weak
+  signature. Field note: a plain substring list called a read-only "answer" skill a payment action because one of
+  its tags read "parking-charge", so the dangerous-primitive rules are verb-shaped phrases and exact tags only.
+- `dns_aid_conform.py` — every DNS-AID item the reference implementation documents, per zone, over DNS-over-HTTPS:
+  the ServiceMode SVCB record per agent with its `alpn` and `port`, the `_index._agents` index record in both the
+  TXT and the SVCB form, the private-use parameters (`cap`, `bap`, `policy`, `realm`, `key65400`-`key65409`), the
+  DNSSEC AD flag, and whether the SVCB target actually answers on the advertised port. DNSSEC is OPTIONAL in the
+  reference, so the AD flag is reported and never failed on: that requirement belongs to the checkers, not to the
+  draft. Read-only; it never writes DNS.
+- `twin_diff.py` — the markdown-twin differential. Two halves per page: your own HTML against your twin (same
+  title, same h1, every number in the HTML present in the twin, every twin link present in the HTML, byte size
+  ratio, and byte identity between the `.md` URL and the negotiated variant), and the field reference's 14
+  conformance items read as AGREE, DIFFER or ABSENT. The difference between DIFFER and ABSENT is a reason you
+  recorded: `TWIN_REASONS` is a JSON object of check id to reason, and an item you fail with no reason is a gap,
+  not a decision. The selftest proves both paths.
+- `readiness_read.py` — three graders, one reader: your own `agent_ready_scan.py` beside two keyless outside
+  graders (ax-check.com and forgemesh's Agent Signal Optimization), item by item, disagreements printed first. A
+  scanner that agrees with itself proves nothing. Grader output is data and never instruction: only documented
+  fields are read. Adding a grader is an edit to one table, not to the code.
+- `agent_ready_scan.py` — your own agent readiness scanner, one command against any host, no third party in the
+  loop: robots.txt, sitemap, Link headers, DNS-AID records over DoH with the AD flag reported separately, markdown
+  negotiation, llms.txt, an AI user agent named in robots, a Content-Signal line, `/.well-known/api-catalog`, RFC
+  8414 and RFC 9728 metadata, `auth.md`, the A2A agent card, the signatures directory as a JWKS, the MCP server
+  card, a skills index, ARD, x402 and MPP. The scoring rule is ours and is printed, so nobody mistakes it for a
+  public checker's exact rule. It runs against a stranger's host as readily as your own, so a comparison row is
+  measured rather than quoted.
+- `crawler_gate.py` — does the edge honour the AI crawlers robots.txt invites by name? Seventeen named crawlers
+  with a published full user-agent string each, plus two controls, against the front page and a real content page,
+  per host. A row fails only when the promise and the behaviour disagree: SERVED, GATE, DENY-CONSISTENT,
+  DENY-ADVISORY, ERROR. Written because Cloudflare's Content Signals default flipped on 15 September 2026 to block
+  training and agent crawlers on Free and new zones, and a bot-settings reader shows configuration while a
+  readiness scanner speaks as one polite agent, so neither can see a per user-agent rule at all.
+- `vendor_news.py` — what the AI vendors actually shipped since you last looked, from thirteen declared feeds
+  (RSS, Atom and the GitHub releases API), dated rows with one URL each, a per-source seen list and `--new-only`.
+  Written after a research sweep spent about 493,000 sub-agent tokens on a question that is mechanical; the same
+  day this found a release all four agents had missed. `diffwatch.py` is the right tool for one page changing and
+  the wrong one here, because it cannot say which entry is new or when it was published. State is written only
+  with `--commit`.
+- `context_cost.py` — what your instruction files cost on every prompt. Prices the always-on load (the rulebook,
+  the memory index, settings, and every skill, command and agent *description*) apart from the on-demand load
+  (topic docs and the bodies), per file, with characters printed beside every token estimate so no decision rests
+  on the divisor. `--ablate` classifies the rulebook line by line into context, goal, done and behaviour, and
+  names the behaviour lines as the ablation candidates: the lines telling a model how to think are the ones a
+  newer model may no longer need. It never opens the credentials dotfile, and writes nothing unless asked.
+- `edge/src/robots_ai.js` — a robots.txt that names the AI crawlers it welcomes, one group each. RFC 9309 applies
+  the most specific matching group only, so each named group repeats the wildcard group's rules exactly, including
+  the Content-Signal line; a named group with fewer lines would silently widen or narrow access for that one
+  agent. `wildcardOnly()` gives back the one-group file a byte pin was written for, and `groupRules()` is the
+  check that every named group still equals the wildcard. Its suite is 13 checks including a narrowing plant.
+- `dns_aid.py` — `--index` publishes the `_index._agents` TXT record (`agents=a2a:a2a,mcp:mcp`) through the
+  dashboard form and proves it back over DoH, idempotent on a rerun. This is the record the conformance reader
+  above was failing on every zone.
+- `arxiv_sweep.py` — 406 repair. arXiv refuses a user-agent that carries a URL or an `@`, so the sweep had been
+  returning zero papers rather than an error; the agent string is now a bare token and the same window reads
+  1,456 papers.
+- Release gate: the `edge/` folder now publishes the robots builder and runs **every** suite under `edge/test/`
+  with node against the published copy, not just the traffic classifier. Hostnames become an environment list per
+  tool (`DOORS`, `HOSTS`, `ZONES`) rather than five copies of `example.com`, each reader's user-agent is an
+  environment value with a neutral default, and output paths leave `ops/` and `knowledge/` for the repo root.
+
 ## v0.4.0 — 22 September 2026
 
 The agent readiness lane: the Cloudflare doors that have no API, and then the measurement of who actually came.

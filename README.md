@@ -10,9 +10,47 @@ an honest line instead of a traceback.
 Built and field-tested in production at [Axion Labs](https://getaxionlabs.com),
 where they feed a multi-agent research and publishing pipeline daily.
 
+## v0.5 — can a machine buyer and a machine reader actually get in?
+
+Latest release: **v0.5.0** (22 September 2026). Ten readers that ask that question from outside, plus two repairs.
+v0.4 made a site *readable* by agents; these tools check, from the buyer's side of the wire, that the readability
+and the price survive the edge, the card, the DNS and the crawler rules. Every one answers `--selftest` with no
+network and `--help` with exit 0.
+
+| Tool | One job | Cost |
+|---|---|---|
+| `buyer_probe.py` | Walk the whole path an unnamed, unsigned, script-only machine buyer walks: front door, catalog, service description, priced operation, the 402, the price in it, the payment destination, the checkout link, a wrong key refused. Reads seven edge settings by their effect, because a dashboard is the only other place they show. Nothing is posted or paid. | 0 |
+| `a2a_audit.py` | Every agent card a host publishes against ten public A2A card rules, each row carrying the JSON path it looked at, so a FAIL names the field to change. | 0 |
+| `dns_aid_conform.py` | Every DNS-AID item the reference implementation documents, per zone, over DNS-over-HTTPS: the SVCB record per agent, the `_index._agents` record in both forms, private-use parameters, the DNSSEC AD flag, and whether the target answers on the port it advertises. | 0 |
+| `twin_diff.py` | The markdown-twin differential: your HTML against your twin (title, h1, every number, every link, byte identity with the negotiated variant), and the field reference's 14 conformance items as AGREE, DIFFER or ABSENT. | 0 |
+| `readiness_read.py` | Three graders, one reader: your own scan beside two keyless outside graders, item by item, disagreements first. A scanner that agrees with itself proves nothing. | 0 |
+| `agent_ready_scan.py` | Your own agent readiness scanner: robots, sitemap, Link headers, DNS-AID, markdown, llms.txt, Content-Signal, api-catalog, RFC 8414/9728, auth.md, agent card, JWKS, MCP card, x402, MPP. Any host, yours or a stranger's. | 0 |
+| `crawler_gate.py` | Does the edge honour the AI crawlers robots.txt invites by name? 17 named crawlers plus two controls, front page and a content page, per host. A row fails only when the promise and the behaviour disagree. | 0 |
+| `vendor_news.py` | What the AI vendors actually shipped since you last looked: 13 declared feeds, dated rows with one URL each, a per-source seen list, `--new-only`. | 0 |
+| `context_cost.py` | What your instruction files cost on every prompt, always-on load priced apart from on-demand, characters beside every token estimate. `--ablate` names the lines a newer model may no longer need. | 0 |
+| `edge/src/robots_ai.js` | A robots.txt that names the AI crawlers it welcomes, one group each, every group repeating the wildcard rules exactly, because RFC 9309 applies only the most specific group. | 0 |
+
+Repairs in the same release: `dns_aid.py --index` publishes and proves the `_index._agents` TXT record, and
+`arxiv_sweep.py` no longer returns zero papers on an HTTP 406 (arXiv refuses a user-agent carrying a URL or an
+`@`; the agent string is a bare token now, and the same window reads 1,456 papers).
+
+Hostnames are an environment list per tool, so nothing here has an estate baked into it:
+
+```bash
+export DOORS=example.com,example.org     # buyer_probe, a2a_audit, crawler_gate
+export HOSTS=example.com,example.org     # twin_diff, readiness_read
+export ZONES=example.com,example.org     # dns_aid_conform
+export TWIN_REASONS='{"md.noindex":"deliberate: canonical Link instead"}'   # twin_diff: a DIFFER needs a reason
+python tools/buyer_probe.py example.com --selftest
+```
+
+Each reader's user-agent is an environment value with a neutral default (`BUYER_PROBE_UA`, `A2A_AUDIT_UA`,
+`CRAWLER_GATE_UA`, `TWIN_DIFF_UA`, `READINESS_READ_UA`, `READY_SCAN_UA`, `DNS_AID_CONFORM_UA`, `VENDOR_NEWS_UA`).
+Set it to something that names you: `crawler_gate.py` needs it to tell your own requests from a crawler's.
+
 ## v0.4 — the agent readiness lane
 
-Latest release: **v0.4.0** (22 September 2026). Six tools and one JavaScript folder for the two halves of making a
+v0.4.0 (22 September 2026). Six tools and one JavaScript folder for the two halves of making a
 site readable by agents: the Cloudflare doors that have no API, and then finding out who actually came.
 
 Three of these drive a **logged-in Chrome**, because the pages they read have no API at all. Start one by hand,
@@ -109,11 +147,13 @@ Already shipped in v0.2.2 and unchanged: one command per call over CDP against a
 
 The JavaScript half: `withTrafficMeter(handler)` wraps a Worker and writes one classified Analytics Engine data
 point per outside request, never twice for a handler that re-enters itself. No address, no full user-agent, no
-query string, no cookie and no referrer is stored, and its 126-case suite asserts that. See
+query string, no cookie and no referrer is stored, and its 126-case suite asserts that. v0.5 adds
+`robots_ai.js`, the robots.txt builder that names the AI crawlers it welcomes, with a 13-check suite. See
 [edge/README.md](edge/README.md).
 
 ```bash
-node edge/test/traffic_class.test.mjs
+node edge/test/traffic_class.test.mjs      # 126 checks
+node edge/test/robots_ai.test.mjs          # 13 checks
 ```
 
 ## v0.3 — three tools as skills
@@ -240,6 +280,12 @@ Every tool answers `--help`; the v0.2.4 and v0.3.0 tools also answer `--selftest
 
 The v0.4 tools answer `--selftest` too, with no network and no Chrome:
 `dns_aid.py`, `cf_readiness.py`, `cf_bot_submit.py`, `bot_ranges.py`, `traffic_read.py`.
+
+Every v0.5 tool answers `--selftest` with no network, and the counts on the published copies are:
+`buyer_probe.py` 26, `a2a_audit.py` 30, `dns_aid_conform.py` 18, `twin_diff.py` 30, `readiness_read.py` 30,
+`vendor_news.py` 20, `crawler_gate.py` 22, `context_cost.py` 20, `agent_ready_scan.py` 32, and the two repairs
+`dns_aid.py` 17, `arxiv_sweep.py` 13. `buyer_probe.py` runs its checks against a stub HTTP server it starts on
+loopback, so the selftest never leaves the machine.
 
 Requirements: Python 3.10+. `yt.py`/`transcribe.py` need `yt-dlp` for URL input.
 `pdfx.py` needs `pypdf`. `browserd.py` needs `playwright` + a Chrome. `search.py`
