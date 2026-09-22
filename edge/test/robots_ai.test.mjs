@@ -16,6 +16,7 @@ check("no duplicate blank lines", !out.includes("\n\n\n"), "");
 check("ends with one newline", out.endsWith("\n") && !out.endsWith("\n\n"), JSON.stringify(out.slice(-4)));
 check("leading and trailing newlines in body tolerated", robotsWithAiGroups("\n" + body + "\n") === out, "");
 check("Content-Signal in every group", groups.every((g) => g.includes("Content-Signal:")), "");
+
 /* wildcardOnly / groupRules: the helpers a readiness suite uses. */
 {
   const { wildcardOnly, groupRules } = await import("../src/robots_ai.js");
@@ -28,5 +29,6 @@ check("Content-Signal in every group", groups.every((g) => g.includes("Content-S
   check("PLANT: a narrowed named group is caught", (() => { const bad = served.replace("User-agent: GPTBot\nAllow: /\n", "User-agent: GPTBot\n"); const r = groupRules(bad); return r.GPTBot !== r["*"]; })());
 }
 
+/* The report and the exit come last (22 Sep 2026): a suite that exits before its last block is not a gate. */
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
